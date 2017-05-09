@@ -1,13 +1,13 @@
 {
     "blacklist": "blacklist.txt",
     "whitelist": "whitelist.txt",
-    "port": 8010,
+    "port": 8001,
     "buffersize": 1024,
     "log": "log.log",
     "vm-names": [
-        "linux-mint"
+        "Ubuntu"
     ],
     "snapshots": {
-        "linux-mint": "linux-vm1"
+        "Ubuntu": "Ubuntu-snapshot"
     }
 }

@@ -61,7 +61,8 @@ def handleServerReset(addr, conn, data):
         addToWhiteList(addr[0])
         commands = ["VBoxManage controlvm " + dataArray[1] + " poweroff", 
                     "VBoxManage snapshot " + dataArray[1] + " restore " + config["snapshots"][dataArray[1]],
-                    "VBoxManage showvminfo " + dataArray[1] + " | grep State >> ~/virtualboxLogs.log"]
+                    "VBoxManage showvminfo " + dataArray[1] + " | grep State >> ~/virtualboxLogs.log",
+		    "VBoxHeadless -s " + dataArray[1] + " &"]
         for command in commands:
             if os.system(command) == 0:
                 continue
