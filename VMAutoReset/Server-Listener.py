@@ -2,9 +2,10 @@ import socket
 import sys
 import json
 import os
+import time
 
 # import the config file
-config_data = open('config.json').read()
+config_data = open('server.config').read()
 config = json.loads(config_data)
 
 # Constant declaration
@@ -41,7 +42,7 @@ def addToBlackList(addr):
     if addr not in WHITELIST and addr not in BLACKLIST:
         BLACKLIST.append(addr)
         with open(config["blacklist"], "a") as BLACKLISTFILE:
-            BLACKLISTFILE.write(addr)
+            BLACKLISTFILE.write(addr + "\n")
         BLACKLISTFILE.close()
         print 'Blacklisted ' + addr + ' for invalid response.'
 
@@ -49,7 +50,7 @@ def addToWhiteList(addr):
     if addr not in BLACKLIST and addr not in WHITELIST:
         WHITELIST.append(addr)
         with open(config["whitelist"], "a") as WHITELISTFILE:
-            WHITELISTFILE.write(addr)
+            WHITELISTFILE.write(addr + "\n")
         WHITELISTFILE.close()
         print 'Whitelisted ' + addr + '. first response was valid.'
 
@@ -58,20 +59,11 @@ def handleServerReset(addr, conn, data):
     conn.close()
     if dataArray[0] == 'reset' and dataArray[1] in config["vm-names"]:
         addToWhiteList(addr[0])
-        commands = ["VBoxManage controlvm " + dataArray[1] + " poweroff", 
-                    "VBoxManage snapshot " + dataArray[1] + " restore " + config["snapshots"][dataArray[1]],
-                    "VBoxManage showvminfo " + dataArray[1] + " | grep State >> ~/virtualboxLogs.log",
-		            "VBoxHeadless -s " + dataArray[1] + " &"]
-        for command in commands:
-            if os.system(command) == 0:
-                continue
-            else:
-                if command != commands[0]:
-                    print 'Error restarting ' + dataArray[1]
-                    break
-                else:
-                    print dataArray[1] + ' not on. Ignoring and continuing.'
-                    continue
+        print 'Attempting to reset ' + dataArray[1] + ' to ' + config["snapshots"][dataArray[1]] + ' on request of ' + addr[0]
+        os.system("VBoxManage controlvm " + dataArray[1] + " poweroff")
+        # time.sleep(3)
+        os.system("VBoxManage snapshot " + dataArray[1] + " restore " + config["snapshots"][dataArray[1]])
+        os.system("VBoxHeadless -s " + dataArray[1] + " &")
     else:
         addToBlackList(addr[0])
         conn.send('If you were not previously whitelisted, you have been blacklisted for sending an invalid request. Contact server admin.')
@@ -96,6 +88,8 @@ try:
     while 1:
         conn, addr = s.accept()
         data = conn.recv(BUFFER_SIZE)
+        print 'connection from ' + addr[0] 
+        conn.send('ready')
         if not data:
             print 'connection from ' + addr[0] + ' terminated unexpectedly.'
         else:
@@ -108,6 +102,8 @@ try:
                 conn.send('This device has been Blacklisted. Contact server admins.')
                 conn.close()
 except KeyboardInterrupt:
+    s.shutdown(socket.SHUT_RDWR)
+    s.close()
     print '\r'
     sys.exit()
 except EOFError:
