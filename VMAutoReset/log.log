@@ -12,3 +12,29 @@ reseting server 4
 Listening...
 reseting server 1
 
+127.0.0.1 found in whitelist file. Whitelisting.
+Listening...
+
+127.0.0.1 found in whitelist file. Whitelisting.
+Listening...
+
+127.0.0.1 found in whitelist file. Whitelisting.
+127.0.0.1 found in whitelist file. Whitelisting.
+Listening on port 8000...
+['reset', 'Ubuntu']
+127.0.0.1 found in whitelist file. Whitelisting.
+Listening on port 8000...
+Whitelisted 192.168.0.112. first response was valid.
+Error restarting Ubuntu
+127.0.0.1192.168.0.112 found in whitelist file. Whitelisting.
+Failed to bind socket.
+127.0.0.1192.168.0.112 found in whitelist file. Whitelisting.
+Listening on port 8001...
+
+127.0.0.1192.168.0.112 found in whitelist file. Whitelisting.
+Listening on port 8001...
+
+127.0.0.1192.168.0.112 found in whitelist file. Whitelisting.
+Listening on port 8001...
+Whitelisted 127.0.0.1. first response was valid.
+Ubuntu not on. Ignoring and continueing.

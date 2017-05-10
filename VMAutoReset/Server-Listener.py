@@ -2,7 +2,6 @@ import socket
 import sys
 import json
 import os
-import hashlib
 
 # import the config file
 config_data = open('config.json').read()
@@ -16,7 +15,7 @@ BLACKLISTFILENAME = config["blacklist"]
 WHITELISTFILENAME = config["whitelist"]
 
 # Redirect output to log file. The 0 stops python from buffering the output.
-# sys.stdout = open(config["log"], "a", 0)
+sys.stdout = open(config["log"], "a", 0)
 
 # Declare black and whitelist arrays
 BLACKLIST = []
@@ -56,13 +55,13 @@ def addToWhiteList(addr):
 
 def handleServerReset(addr, conn, data):
     dataArray = data.rstrip().split(' ')
-    print dataArray
+    conn.close()
     if dataArray[0] == 'reset' and dataArray[1] in config["vm-names"]:
         addToWhiteList(addr[0])
         commands = ["VBoxManage controlvm " + dataArray[1] + " poweroff", 
                     "VBoxManage snapshot " + dataArray[1] + " restore " + config["snapshots"][dataArray[1]],
                     "VBoxManage showvminfo " + dataArray[1] + " | grep State >> ~/virtualboxLogs.log",
-		    "VBoxHeadless -s " + dataArray[1] + " &"]
+		            "VBoxHeadless -s " + dataArray[1] + " &"]
         for command in commands:
             if os.system(command) == 0:
                 continue
@@ -71,10 +70,8 @@ def handleServerReset(addr, conn, data):
                     print 'Error restarting ' + dataArray[1]
                     break
                 else:
-                    print dataArray[1] + ' not on. Ignoring and continueing.'
+                    print dataArray[1] + ' not on. Ignoring and continuing.'
                     continue
-        
-        conn.close()
     else:
         addToBlackList(addr[0])
         conn.send('If you were not previously whitelisted, you have been blacklisted for sending an invalid request. Contact server admin.')
@@ -92,7 +89,7 @@ except socket.error as msg:
 
 # Start listening with maximum queue of 5
 s.listen(5)
-print 'Listening...'
+print 'Listening on port ' + str(PORT) + '...'
 
 # Server logic
 try:

@@ -9,5 +9,8 @@
     ],
     "snapshots": {
         "Ubuntu": "Ubuntu-snapshot"
-    }
+    },
+    "watchlist": [
+        "/var/www/html/index.html"
+    ]
 }
