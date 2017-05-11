@@ -1,26 +1,4 @@
 #!/bin/bash
-#
-# --------------------------------------------------------------------
-# This is a free shell script under GNU GPL version 3.0 or above
-# Copyright (C) 2005 ReFlectiv project.
-# Feedback/comment/suggestions : http://www.reflectiv.net/
-# -------------------------------------------------------------------------
-#
-# This script automatically set up a new *Debian* server (IMPORTANT : Debian!), by doing these actions :
-#
-# * Modification of the root password
-# * Creating users
-# * Securing SSH
-# * Install and set some security for :
-# ** Apache
-# *** Disable modules : userdir suexec cgi cgid dav include autoindex authn_file status env headers proxy proxy_balancer proxy_http headers
-# *** Enable modules : expires rewrite setenvif ssl
-# ** Mysql
-# *** Execute mysql_secure_installation script
-#
-# @see http://plusbryan.com/my-first-5-minutes-on-a-server-or-essential-security-for-linux-servers
-# For install NGinx & PHP, see :
-# @see https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-debian-7
 
 # First of all, we check if the user is root
 if [[ $EUID -ne 0 ]]; then

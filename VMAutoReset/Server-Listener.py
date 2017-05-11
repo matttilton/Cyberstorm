@@ -64,6 +64,9 @@ def handleServerReset(addr, conn, data):
         # time.sleep(3)
         os.system("VBoxManage snapshot " + dataArray[1] + " restore " + config["snapshots"][dataArray[1]])
         os.system("VBoxHeadless -s " + dataArray[1] + " &")
+    elif dataArray[0] == 'snapshot' and dataArray[1] in config["vm-names"]:
+        print 'Snapshoting ' + dataArray[1] + ' on request of ' + addr[0]
+        os.system("VBoxManage snapshot " + dataArray[1] + " take " + config["snapshots"][dataArray[1]])
     else:
         addToBlackList(addr[0])
         conn.send('If you were not previously whitelisted, you have been blacklisted for sending an invalid request. Contact server admin.')
@@ -82,7 +85,7 @@ except socket.error as msg:
 # Start listening with maximum queue of 5
 s.listen(5)
 print 'Listening on port ' + str(PORT) + '...'
-
+ 
 # Server logic
 try:
     while 1:
