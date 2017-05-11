@@ -1,4 +1,4 @@
-CREATE LOGIN 'jgourd'@'%' IDENTIFIED BY 'gourdscheezyjalapenosoup';
+CREATE USER 'jgourd'@'%' IDENTIFIED BY 'gourd';
 GRANT select on * . * to 'jgourd'@'%';
 FLUSH PRIVILEGES;
 
