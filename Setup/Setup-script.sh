@@ -63,7 +63,10 @@ sed -i "s/X11Forwarding yes/X11Forwarding no/" /etc/ssh/sshd_config
 echo " * Removing Root Login"
 sed -i "s/PermitRootLogin yes/PermitRootLogin no/" /etc/ssh/sshd_config
 
-echo "UseDNS no" >> /etc/ssh/sshd_config
+if grep -q -e 'UseDNS' /etc/ssh/sshd_config
+    then echo "UseDns already present"
+    else echo "UseDNS no" >> /etc/ssh/sshd_config
+fi
 
 echo "This server is owned by Canes Venatici. Goodbye." >> /etc/motd
 
@@ -83,10 +86,13 @@ if [[ ("$jail" == "y" || "$jail" == "Y" || "$jail" == "") ]]; then
     cp /etc/nsswitch.conf /var/jail/etc
     cp /etc/hosts /var/jail/etc
     cp /bin/bash /var/jail/bin/
-    echo "Match group sshusers
+    if grep -q -e 'Match group sshusers' /etc/ssh/sshd_config
+        then echo 'already have jail'
+        else echo "Match group sshusers
           ChrootDirectory /var/jail/
           X11Forwarding no
           AllowTcpForwarding no" >> /etc/ssh/sshd_config
+    fi
 fi
 
 
@@ -101,9 +107,15 @@ if [[ ("$setup_apache" == "y" || "$setup_apache" == "Y" || "$setup_apache" == ""
     /etc/init.d/apache2 restart
 fi
 
-read "Setup Vsftpd? [Y/n] : " setup_vsftpd
+read -e -p "Setup Vsftpd? [Y/n] : " setup_vsftpd
 if [[ ("$setup_vsftpd" == "y" || "$setup_vsftpd" == "Y" || "$setup_vsftpd" == "") ]]; then
+    sed -i "s/anonymous_enable=NO/anonymous_enable=YES/" /etc/vsftpd.conf
+    sed -i "s/local_enable=YES/local_enable=NO/" /etc/vsftpd.conf
+    sed -i 's/.*ftpd_banner=.*/ftpd_banner=This ftp server belongs to Canes Venatici/' /etc/vsftpd.conf
+    mkdir /home/ftp
+    echo "anon_root=/home/ftp" >> /etc/vsftpd.conf
 
+    service vsftpd restart
 fi
 
 read -e -p "Setup MySQL? [Y/n] : " install_mysql
