@@ -103,8 +103,10 @@ if [[ ("$install_mysql" == "y" || "$install_mysql" == "Y" || "$install_mysql" ==
     if [[ ("$mysql_secure" == "y" || "$mysql_secure" == "Y" || "$mysql_secure" == "") ]]; then
         mysql_secure_installation
     fi
+    sed -i "s/.*bind-address.*=.*127.0.0.1.*/#bind-address=127.0.0.1/" /etc/mysql/mysql.conf.d/mysqld.cnf
     echo "Input mysql root password"
     mysql -uroot -p < setupdb.sql
+    service mysql restart
 fi
 
 exit 0;
