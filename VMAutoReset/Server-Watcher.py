@@ -1,6 +1,5 @@
 import urllib2
 import time
-import subprocess
 import telnetlib
 import os
 import pty
